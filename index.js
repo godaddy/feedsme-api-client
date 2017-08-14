@@ -14,11 +14,11 @@ var methods = ['POST', 'PUT'];
  * Feedsme API client.
  *
  * @constructor
- * @param {Object|String} opts Options for root URL of carpenter service 
- * @param {String} opts.url The root URL of the carpenter service
- * @param {String} opts.uri The root URL of the carpenter service
- * @param {String} opts.href The href for root URL of the carpenter service
- * @param {String} opts.protocol Protocol for root URL of the carpenter service
+ * @param {Object|String} opts Options for root URL of feedsme service 
+ * @param {String} opts.url The root URL of the feedsme service
+ * @param {String} opts.uri The root URL of the feedsme service
+ * @param {String} opts.href The href for root URL of the feedsme service
+ * @param {String} opts.protocol Protocol for root URL of the feedsme service
  * @public
  */
 function Feedsme(opts) {
