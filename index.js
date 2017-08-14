@@ -50,7 +50,7 @@ function Feedsme(opts) {
  * @param {String} env Environment we trigger the change for.
  * @param {Object} options Configuration.
  * @param {Function} next Completion callback.
- * @returns {Hyperquest} [description]
+ * @returns {Stream} the request
  * @private
  */
 Feedsme.prototype.change = function build(env, options, next) {
@@ -63,7 +63,7 @@ Feedsme.prototype.change = function build(env, options, next) {
  * @param {String} pathname Pathname we need to hit.
  * @param {Object} options Hyperquest options
  * @param {Function} next Completion callback.
- * @returns {Hyperquest} the request
+ * @returns {Stream} the request
  * @api private
  */
 Feedsme.prototype.send = function send(pathname, options, next) {
