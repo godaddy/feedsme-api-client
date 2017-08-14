@@ -63,7 +63,7 @@ Feedsme.prototype.change = function build(env, options, next) {
  * @param {String} pathname Pathname we need to hit.
  * @param {Object} options Hyperquest options
  * @param {Function} next Completion callback.
- * @returns {Hyperquest} Hyperquest instance
+ * @returns {Hyperquest} the request
  * @api private
  */
 Feedsme.prototype.send = function send(pathname, options, next) {
