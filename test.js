@@ -1,12 +1,12 @@
 describe('feedsme-api-client', function () {
   'use strict';
 
-  var assume = require('assume')
-    , Feedsme = require('./')
-    , nock = require('nock')
-    , url = require('url')
-    , feedsme
-    , uri;
+  var assume = require('assume'),
+    Feedsme = require('./'),
+    nock = require('nock'),
+    http = require('http'),
+    url = require('url');
+  var feedsme, uri;
 
   beforeEach(function each() {
     uri = 'http://localhost:1212/';
@@ -27,7 +27,7 @@ describe('feedsme-api-client', function () {
   it('can be configured with an agent', function () {
     feedsme = new Feedsme({
       uri: uri,
-      agent: new require('http').Agent()
+      agent: new http.Agent()
     });
 
     assume(feedsme.agent).is.instanceof(require('http').Agent);
@@ -39,16 +39,16 @@ describe('feedsme-api-client', function () {
       next = assume.wait(2, next);
 
       nock(uri)
-      .post('/change/dev')
-      .reply(200, function reply(uri, body) {
-        body = JSON.parse(body);
+        .post('/change/dev')
+        .reply(200, function reply(uri, body) {
+          body = JSON.parse(body);
 
-        assume(body.name).equals('foo-bar');
-        nock.cleanAll();
-        next();
+          assume(body.name).equals('foo-bar');
+          nock.cleanAll();
+          next();
 
-        return {};
-      });
+          return {};
+        });
 
       feedsme.change('dev', {
         data: {
