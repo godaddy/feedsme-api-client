@@ -1,9 +1,9 @@
 'use strict';
 
 var request = require('hyperquest'),
-    tryParse = require('json-try-parse'),
-    url = require('url'),
-    bl = require('bl');
+  tryParse = require('json-try-parse'),
+  url = require('url'),
+  bl = require('bl');
 
 //
 // Methods that require an `application/json` header.
@@ -14,11 +14,15 @@ var methods = ['POST', 'PUT'];
  * Feedsme API client.
  *
  * @constructor
- * @param {String} base The root URL of the carpenter service
- * @api public
+ * @param {Object|String} opts Options for root URL of feedsme service 
+ * @param {String} opts.url The root URL of the feedsme service
+ * @param {String} opts.uri The root URL of the feedsme service
+ * @param {String} opts.href The href for root URL of the feedsme service
+ * @param {String} opts.protocol Protocol for root URL of the feedsme service
+ * @public
  */
 function Feedsme(opts) {
-  if (!this) new Feedsme(opts);
+  if (!this) new Feedsme(opts); // eslint-disable-line no-new
 
   if (typeof opts === 'string') {
     this.base = opts;
@@ -46,7 +50,8 @@ function Feedsme(opts) {
  * @param {String} env Environment we trigger the change for.
  * @param {Object} options Configuration.
  * @param {Function} next Completion callback.
- * @api private
+ * @returns {Stream} the request
+ * @private
  */
 Feedsme.prototype.change = function build(env, options, next) {
   return this.send(['change', env].join('/'), options, next);
@@ -58,14 +63,14 @@ Feedsme.prototype.change = function build(env, options, next) {
  * @param {String} pathname Pathname we need to hit.
  * @param {Object} options Hyperquest options
  * @param {Function} next Completion callback.
- * @returns {Hyperquest}
+ * @returns {Stream} the request
  * @api private
  */
 Feedsme.prototype.send = function send(pathname, options, next) {
   var base = url.parse(this.base),
-      data = false,
-      statusCode,
-      req;
+    data = false,
+    statusCode,
+    req;
 
   if (typeof pathname === 'object') {
     options = pathname;
