@@ -2,6 +2,7 @@
 
 var request = require('hyperquest'),
   tryParse = require('json-try-parse'),
+  retry = require('retryme'),
   url = require('url'),
   bl = require('bl');
 
@@ -14,7 +15,7 @@ var methods = ['POST', 'PUT'];
  * Feedsme API client.
  *
  * @constructor
- * @param {Object|String} opts Options for root URL of feedsme service 
+ * @param {Object|String} opts Options for root URL of feedsme service
  * @param {String} opts.url The root URL of the feedsme service
  * @param {String} opts.uri The root URL of the feedsme service
  * @param {String} opts.href The href for root URL of the feedsme service
@@ -42,6 +43,8 @@ function Feedsme(opts) {
     : this.base;
 
   this.agent = opts.agent;
+  this.retry = opts.retry;
+
 }
 
 /**
@@ -66,11 +69,11 @@ Feedsme.prototype.change = function build(env, options, next) {
  * @returns {Stream} the request
  * @api private
  */
-Feedsme.prototype.send = function send(pathname, options, next) {
+Feedsme.prototype.send = function send(pathname, options, done) {
   var base = url.parse(this.base),
     data = false,
-    statusCode,
-    req;
+    operation,
+    statusCode;
 
   if (typeof pathname === 'object') {
     options = pathname;
@@ -97,44 +100,50 @@ Feedsme.prototype.send = function send(pathname, options, next) {
     options.headers['Content-Type'] = 'application/json';
   }
 
-  //
-  // Setup hyperquest to formatted URL.
-  //
-  req = request(url.format(base), options)
-    .on('response', function (res) {
-      statusCode = res.statusCode;
-    });
+  operation = retry.op(this.retry, (err) => {
+    return err.message.includes('404')
+      || err.message.includes('400');
+  });
 
-  //
-  // Write JSON data to the request.
-  //
-  if (typeof data === 'object') {
-    try {
-      req.end(JSON.stringify(data));
-    } catch (error) {
-      return next(error);
-    }
-  }
+  operation.attempt((next) => {
+    //
+    // Setup hyperquest to formatted URL.
+    //
+    const req = request(url.format(base), options)
+      .on('response', function (res) {
+        statusCode = res.statusCode;
+      });
 
-
-  return next ? req.pipe(bl(validateBody)) : req;
-
-  //
-  // If a callback is passed, validate the returned body
-  //
-  function validateBody(err, body) {
-    body = tryParse(body);
-
-    if (err || !body) {
-      return next(err || new Error('Unparsable response with statusCode ' + statusCode));
+    //
+    // Write JSON data to the request.
+    //
+    if (typeof data === 'object') {
+      try {
+        req.end(JSON.stringify(data));
+      } catch (error) {
+        return next(error);
+      }
     }
 
-    if (statusCode !== 200) {
-      return next(new Error(body.message || 'Invalid status code ' + statusCode));
-    }
+    req.pipe(bl(validateBody));
 
-    next(null, body);
-  }
+    //
+    // If a callback is passed, validate the returned body
+    //
+    function validateBody(err, body) {
+      body = tryParse(body);
+
+      if (err || !body) {
+        return next(err || new Error('Unparsable response with statusCode ' + statusCode));
+      }
+
+      if (statusCode !== 200) {
+        return next(new Error(body.message || 'Invalid status code ' + statusCode));
+      }
+
+      next(null, body);
+    }
+  }, done);
 
 };
 
