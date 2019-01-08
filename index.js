@@ -59,7 +59,11 @@ function Feedsme(opts) {
  * @private
  */
 Feedsme.prototype.change = function build(env, options, next) {
-  return this.send([this.version, 'change', env].filter(Boolean).join('/'), options, next);
+  return this.send([
+    this.version,
+    'change',
+    env
+  ].filter(Boolean).join('/'), options, next);
 };
 
 /**
