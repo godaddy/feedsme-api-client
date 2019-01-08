@@ -34,11 +34,9 @@ describe('feedsme-api-client', function () {
     assume(feedsme.base).equals(uri);
   });
 
-  [1, '1', 'v1'].forEach(function (version) {
-    it('can be configured with an api version', function () {
-      feedsme = new Feedsme({ uri, version });
-
-      assume(feedsme.version).equals('');
+  it('can be configured with an api version', function () {
+    [1, '1', 'v1'].forEach(function (version) {
+      assume(new Feedsme({ uri, version }).version).equals('');
     });
   });
 
