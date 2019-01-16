@@ -34,15 +34,51 @@ describe('feedsme-api-client', function () {
     assume(feedsme.base).equals(uri);
   });
 
+  it('can be configured with an api version', function () {
+    [1, '1', 'v1'].forEach(function (version) {
+      assume(new Feedsme({ uri, version }).version).equals('');
+    });
+  });
+
+  it('defaults to the v2 api', function () {
+    assume(new Feedsme({ uri, version: 'not one' }).version).equals('v2');
+
+    assume(new Feedsme({ uri }).version).equals('v2');
+  });
+
   describe('#change', function () {
-    it('sends a request to /change/dev ', function (next) {
+    it('sends a request to /v2/change/dev', function (next) {
+      next = assume.wait(2, next);
+
+      nock(uri)
+        .post('/v2/change/dev')
+        .reply(200, function reply(uri, body) {
+          assume(body.name).equals('foo-bar');
+          nock.cleanAll();
+          next();
+
+          return {};
+        });
+
+      feedsme.change('dev', {
+        data: {
+          name: 'foo-bar'
+        }
+      }, next);
+    });
+
+    it('sends a request to /change/dev when using v1 API', function (next) {
+      feedsme = new Feedsme({
+        uri,
+        agent: new http.Agent(),
+        version: 'v1'
+      });
+
       next = assume.wait(2, next);
 
       nock(uri)
         .post('/change/dev')
         .reply(200, function reply(uri, body) {
-          body = JSON.parse(body);
-
           assume(body.name).equals('foo-bar');
           nock.cleanAll();
           next();

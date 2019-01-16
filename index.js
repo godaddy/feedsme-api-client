@@ -9,7 +9,7 @@ var request = require('hyperquest'),
 //
 // Methods that require an `application/json` header.
 //
-var methods = ['POST', 'PUT'];
+const methods = ['POST', 'PUT'];
 
 /**
  * Feedsme API client.
@@ -20,6 +20,7 @@ var methods = ['POST', 'PUT'];
  * @param {String} opts.uri The root URL of the feedsme service
  * @param {String} opts.href The href for root URL of the feedsme service
  * @param {String} opts.protocol Protocol for root URL of the feedsme service
+ * @param {String} opts.version Which feedsme api version to use (defaults to v2)
  * @public
  */
 function Feedsme(opts) {
@@ -35,6 +36,8 @@ function Feedsme(opts) {
     throw new Error('Feedsme URL required');
   }
 
+  this.version = (opts.version === '1' || opts.version === 'v1' || opts.version === 1) ? '' : 'v2';
+
   //
   // Handle all possible cases
   //
@@ -44,7 +47,6 @@ function Feedsme(opts) {
 
   this.agent = opts.agent;
   this.retry = opts.retry;
-
 }
 
 /**
@@ -57,7 +59,11 @@ function Feedsme(opts) {
  * @private
  */
 Feedsme.prototype.change = function build(env, options, next) {
-  return this.send(['change', env].join('/'), options, next);
+  return this.send([
+    this.version,
+    'change',
+    env
+  ].filter(Boolean).join('/'), options, next);
 };
 
 /**
@@ -65,13 +71,12 @@ Feedsme.prototype.change = function build(env, options, next) {
  *
  * @param {String} pathname Pathname we need to hit.
  * @param {Object} options Hyperquest options
- * @param {Function} next Completion callback.
- * @returns {Stream} the request
+ * @param {Function} done Completion callback.
  * @api private
  */
 Feedsme.prototype.send = function send(pathname, options, done) {
-  var base = url.parse(this.base),
-    data = false,
+  const base = url.parse(this.base);
+  let data = false,
     operation,
     statusCode;
 
@@ -81,7 +86,7 @@ Feedsme.prototype.send = function send(pathname, options, done) {
   }
 
   if (typeof options === 'function') {
-    next = options;
+    done = options;
     options = {};
   }
 
