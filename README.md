@@ -1,6 +1,12 @@
-# feedsme-api-client
+# `feedsme-api-client`
 
-The `feedsme-api-client` is an API client for the [`feedsme`][feedsme] build service.
+[![Version npm](https://img.shields.io/npm/v/feedsme-api-client.svg?style=flat-square)](https://www.npmjs.com/package/feedsme-api-client)
+[![License](https://img.shields.io/npm/l/feedsme-api-client.svg?style=flat-square)](https://github.com/warehouseai/feedsme-api-client/blob/master/LICENSE)
+[![npm Downloads](https://img.shields.io/npm/dm/feedsme-api-client.svg?style=flat-square)](https://npmcharts.com/compare/feedsme-api-client?minimal=true)
+[![Dependencies](https://img.shields.io/david/warehouseai/feedsme-api-client.svg?style=flat-square)](https://github.com/warehouseai/feedsme-api-client/blob/master/package.json)
+
+The `feedsme-api-client` is an API client for the [`feedsme`][feedsme] build
+service.
 
 ## Install
 
@@ -18,9 +24,9 @@ followed:
 ```js
 'use strict';
 
-var Feedsme = require('feedsme-api-client');
+const Feedsme = require('feedsme-api-client');
 
-var feedsme = new Feedsme('url-to-the-service');
+const feedsme = new Feedsme('url-to-the-service');
 ```
 
 As you can see in the example above, the `Feedsme` constructor requires one
@@ -33,9 +39,11 @@ argument:
 Trigger a new build on feedsme service.
 
 ```js
-feedsme.change({ data: {
-  name: 'name of the module'
-}}, function () {
+feedsme.change({
+  data: {
+    name: 'name of the module'
+  }
+}, function () {
 
 });
 ```
@@ -45,8 +53,5 @@ feedsme.change({ data: {
 ```sh
 npm test
 ```
-
-## License
-MIT
 
 [feedsme]: https://github.com/godaddy/feedsme
