@@ -5,6 +5,8 @@
 [![npm Downloads](https://img.shields.io/npm/dm/feedsme-api-client.svg?style=flat-square)](https://npmcharts.com/compare/feedsme-api-client?minimal=true)
 [![Dependencies](https://img.shields.io/david/warehouseai/feedsme-api-client.svg?style=flat-square)](https://github.com/warehouseai/feedsme-api-client/blob/master/package.json)
 
+> ⚠️ **DEPRECATED**: This package is no longer maintained and has been deprecated. Please use an alternative solution or contact the maintainers for more information.
+
 The `feedsme-api-client` is an API client for the [`feedsme`][feedsme] build
 service.
 
